@@ -12,13 +12,11 @@ volumes:
 # سرویس‌ها
 ########################
 services:
-
-  ########################  Laravel (PHP‑FPM)  ########################
   app:
     build:
       context: .
       dockerfile: docker/laravel/Dockerfile
-    image: laravel_app                          # ← اضافه شده
+    image: laravel_app
     container_name: laravel_app
     restart: unless-stopped
     env_file: backend/.env.prod
@@ -26,7 +24,8 @@ services:
       - storage:/app/storage
       - dbfile:/app/database
       - ./backend/.env.prod:/app/.env:ro
-    networks: [web]
+    networks:
+      - web
     healthcheck:
       test: ["CMD-SHELL", "php -r 'exit(extension_loaded(\"pdo_sqlite\")?0:1);'"]
       interval: 30s
