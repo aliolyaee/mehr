@@ -32,9 +32,9 @@ services:
   dbmanager:
     image: docker.arvancloud.ir/phpmyadmin
     container_name: dbmanager
-    depends_on:
-      database:
-        condition: service_healthy
+    # depends_on:
+    #   database:
+    #     condition: service_healthy
     environment:
       PMA_HOST: database
       PMA_PORT: 3306
