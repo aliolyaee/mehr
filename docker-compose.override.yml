@@ -1,0 +1,16 @@
+services:
+  app:
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=1
+    volumes:
+      - ./backend:/app              # بایند کامل کد برای HMR
+      - ./backend/vendor:/app/vendor # اگر ترجیح می‌دهید vendor لوکال باشد
+    command: bash -c "composer install && php-fpm -y /usr/local/etc/php-fpm.conf -R"
+
+  react:
+    build:
+      context: frontend
+      dockerfile: Dockerfile.dev     # مثلاً یک فایل dev با vite dev
+    ports:
+      - "5173:5173"
