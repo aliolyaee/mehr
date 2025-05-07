@@ -26,7 +26,6 @@ services:
       timeout: 5s
       retries: 3
 
-  ########################  Queue Worker  ########################
   queue:
     image: laravel_app
     command: php artisan queue:work --sleep=3 --tries=3
