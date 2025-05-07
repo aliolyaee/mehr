@@ -1,16 +1,38 @@
+# این فایل به‌طور خودکار روی فایل اصلی Merge می‌شود
+# هدف: Hot Reload برای Laravel و React روی ماشین توسعه
+
 services:
+
   app:
     environment:
       - APP_ENV=local
       - APP_DEBUG=1
     volumes:
-      - ./backend:/app              # بایند کامل کد برای HMR
-      - ./backend/vendor:/app/vendor # اگر ترجیح می‌دهید vendor لوکال باشد
-    command: bash -c "composer install && php-fpm -y /usr/local/etc/php-fpm.conf -R"
+      - ./backend:/app                       # کد زنده
+      - ./backend/vendor:/app/vendor         # vendor محلی
+      - dbfile:/app/database
+      - storage:/app/storage
+    command: bash -c "
+        composer install &&
+        php-fpm -y /usr/local/etc/php-fpm.conf -R
+    "
+    ports:
+      - "9000:9000"                          # امکان دسترسی مستقیم
+
+  queue:
+    command: php artisan queue:work --tries=1 --timeout=90
+    depends_on:
+      - app
+    volumes:
+      - ./backend:/app
+      - dbfile:/app/database
+      - storage:/app/storage
 
   react:
     build:
       context: frontend
-      dockerfile: Dockerfile.dev     # مثلاً یک فایل dev با vite dev
+      dockerfile: Dockerfile.dev             # اگر فایل Dev جدا دارید
     ports:
-      - "5173:5173"
+      - "5173:5173"                          # Vite dev server
+    volumes:
+      - ./frontend:/app
